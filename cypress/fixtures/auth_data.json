@@ -1,0 +1,10 @@
+{
+    "dev": {
+        "username": "devs",
+        "password": "super!power"
+    },
+    "tst": {
+        "username": "sandbox",
+        "password": "test!easy"
+    }
+}

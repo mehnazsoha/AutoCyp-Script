@@ -1,69 +1,59 @@
 /// <reference types="Cypress"/>
 
-const {
-    signupSelectors
-} = require('../../elements/signup_selectors');
-
 const fake = require('faker');
+const promisify = require('cypress-promise');
 
 // Fake and random values
 let lastName = fake.name.lastName()
 let address = fake.address.streetAddress()
 let city = fake.address.city()
-
 let phoneNumber = `612212${Math.floor(Math.random() * (9999 - 1000) + 1000)}`
+let ssn = `${Math.floor(Math.random() * (999999999 - 100000000) + 100000000)}`
 
 
 describe('Sign up with valid information', () => {
-    let country
-
-    // before(() => {
-    //     cy.visit("https://member.dev.clubswan.com/", {
-    //         auth: {
-    //             username: 'devs',
-    //             password: 'super!power'
-    //         }
-    //     })
-    // });
-
     beforeEach(() => {
-        cy.fixture("signup_data.json").then(function (data) {
-            this.data = data
+        cy.fixture("auth_data.json").then(function (authData) {
+            this.authData = authData
+        })
+        cy.fixture("signup_data.json").then(function (signUpData) {
+            this.signUpData = signUpData
+        })
+        cy.fixture("portalURL_data.json").then(function (portalData) {
+            this.portalData = portalData
+        })
+        cy.fixture("locators_data.json").then(function (locatorData) {
+            this.locatorData = locatorData
         })
     });
 
-    it('Input user informations', function () {
-        cy.visit("https://member.dev.clubswan.com/", {
+    it('Input user informations', async function () {
+        cy.visit(this.portalData.dev.Midas, {
             auth: {
-                username: 'devs',
-                password: 'super!power'
+                username: this.authData.dev.username,
+                password: this.authData.dev.password
             }
         })
-        cy.get("[id='email']").clear().type(this.data.email)
-        cy.get("form button span:first-child").click()
-        cy.get("[id='mui-component-select-country']").click()
-        cy.get("li[data-value='CA']").click()
+        cy.get(this.locatorData.email).clear().type(this.signUpData.email)
+        cy.get(this.locatorData.continue).click()
+        cy.get(this.locatorData.countryDropDown).click()
+        cy.get(this.locatorData.country).click()
 
-        cy.get("[id='mui-component-select-country']").then(($getText) => {
-            country = $getText.text()
-            cy.log(country)
-        })
+        const country = await promisify(cy.get(this.locatorData.countryDropDown).then(el => el.text())) // To wait until get the text from the element
 
-        
+        cy.get(this.locatorData.firstName).clear().type(this.signUpData.firstName)
+        cy.get(this.locatorData.lastName).clear().type(lastName)
 
-        cy.get("[name='firstName']").clear().type(this.data.firstName)
-        cy.get("[name='lastName']").clear().type(lastName)
-        cy.get("button[class='MuiButtonBase-root MuiIconButton-root']").dblclick().then(() => {
-            cy.get("button[class='MuiButtonBase-root MuiButton-root MuiButton-text MuiPickersToolbarButton-toolbarBtn']:nth-child(1)").click()
-            cy.get("div:nth-child(90)").click()
-            cy.contains('OK').click()
-        })
-        cy.get("input[name='address1']").clear().type(address)
-        cy.get("input[name='city']").clear().type(city)
+        cy.get(this.locatorData.calendar).dblclick()
+        cy.get(this.locatorData.yearField).click()
+        cy.get(this.locatorData.year).click()
+        cy.contains('OK').click()
+
+        cy.get(this.locatorData.address1).clear().type(address)
+        cy.get(this.locatorData.city).clear().type(city)
 
         if (country === 'Canada') {
-            cy.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> I am selecting this ")
-            cy.get("input[name='postCode']").clear().type("T5J 3N6")
+            cy.get(this.locatorData.postCode).clear().type(this.signUpData.postCode)
         } else {
             let postCode;
             while (true) {
@@ -73,20 +63,18 @@ describe('Sign up with valid information', () => {
                     break;
                 }
             }
-            cy.log(postCode)
-            cy.get("input[name='postCode']").clear().type(postCode)
+            cy.get(this.locatorData.postCode).clear().type(postCode)
         }
 
-        // if (country === 'Bangladesh') {
-        //     cy.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> I am here ")
-        //     cy.contains('Select').click().then(() => {
-        //         cy.get("li[data-value='Alabama']").click()
-        //     })
-        // }
-
-        cy.get(".tel-input.form-control").clear().type(phoneNumber)
-        cy.get("[name='password']").clear().type(this.data.password)
-        cy.get("[name='confirmPassword']").clear().type(this.data.password)
-        cy.get("[type='checkbox']").check()
+        if (country === 'United States of America') {
+            cy.contains('Select').click()
+            cy.get(this.locatorData.state).click()
+            cy.get(this.locatorData.ssn).clear().type(ssn)
+        }
+// Need to select the 
+        cy.get(this.locatorData.phoneNumber).clear().type(phoneNumber)
+        cy.get(this.locatorData.password).clear().type(this.signUpData.password)
+        cy.get(this.locatorData.confirmPassword).clear().type(this.signUpData.password)
+        cy.get(this.locatorData.checkBox).check()
     });
 });
