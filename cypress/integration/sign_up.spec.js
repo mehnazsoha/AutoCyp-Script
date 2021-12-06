@@ -10,7 +10,6 @@ let city = fake.address.city()
 let phoneNumber = `612212${Math.floor(Math.random() * (9999 - 1000) + 1000)}`
 let ssn = `${Math.floor(Math.random() * (999999999 - 100000000) + 100000000)}`
 
-
 describe('Sign up with valid information', () => {
     beforeEach(() => {
         cy.fixture("auth_data.json").then(function (authData) {
@@ -22,7 +21,7 @@ describe('Sign up with valid information', () => {
         cy.fixture("portalURL_data.json").then(function (portalData) {
             this.portalData = portalData
         })
-        cy.fixture("locators_data.json").then(function (locatorData) {
+        cy.fixture("signup_locators_data.json").then(function (locatorData) {
             this.locatorData = locatorData
         })
     });
@@ -44,7 +43,7 @@ describe('Sign up with valid information', () => {
         cy.get(locator.continue).click()
         cy.get(locator.countryDropDown).click()
         cy.get(locator.country).click()
-        
+
         const country = await promisify(cy.get(locator.countryDropDown).then(el => el.text())) // Wait until get the text from the element
 
         cy.get(locator.firstName).clear().type(user.firstName)
@@ -62,8 +61,8 @@ describe('Sign up with valid information', () => {
             let postCode;
             while (true) {
                 const generatePostCode = fake.address.zipCode();
-                if (generatePostCode.length === 5) {
-                    postCode = generatePostCode;
+                if (generatePostCode.length === 5 && generatePostCode[0] != 0) {
+                    postCode = generatePostCode
                     break;
                 }
             }
