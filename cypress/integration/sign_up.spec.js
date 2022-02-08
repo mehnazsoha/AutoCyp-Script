@@ -4,6 +4,7 @@ const fake = require('faker');
 const promisify = require('cypress-promise');
 
 // Fake and random values
+let middleName = fake.name.firstName()
 let lastName = fake.name.lastName()
 let address = fake.address.streetAddress()
 let city = fake.address.city()
@@ -32,7 +33,7 @@ describe('Sign up with valid information', () => {
         const locator = this.locatorData
         const user = this.userData
 
-        cy.visit(portal.ClubSwan, {
+        cy.visit(portal.PLCU, {
             auth: {
                 username: credentials.username,
                 password: credentials.password
@@ -47,7 +48,7 @@ describe('Sign up with valid information', () => {
         const country = await promisify(cy.get(locator.countryDropDown).then(el => el.text())) // Wait until get the text from the element
 
         cy.get(locator.firstName).clear().type(user.firstName)
-        cy.get(locator.lastName).clear().type(lastName)
+        cy.get(locator.lastName).clear().type(middleName + " " + lastName)
         cy.get(locator.calendar).dblclick()
         cy.get(locator.yearField).click()
         cy.get(locator.year).click()
