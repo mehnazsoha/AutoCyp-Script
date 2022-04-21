@@ -33,7 +33,7 @@ describe('Sign up with valid information', () => {
         const locator = this.locatorData
         const user = this.userData
 
-        cy.visit(portal.PLCU, {
+        cy.visit(portal.ClubSwan, {
             auth: {
                 username: credentials.username,
                 password: credentials.password
@@ -42,6 +42,8 @@ describe('Sign up with valid information', () => {
 
         cy.get(locator.email).clear().type(user.email)
         cy.get(locator.continue).click()
+        // await promisify(cy.get(locator.KYContinue.click()))
+
         cy.get(locator.countryDropDown).click()
         cy.get(locator.country).click()
 

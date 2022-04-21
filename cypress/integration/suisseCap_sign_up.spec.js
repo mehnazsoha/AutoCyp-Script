@@ -27,8 +27,8 @@ describe('Sign up with valid information', () => {
     });
 
     it('Input user informations', function () {
-        const portal = this.portalData.tst
-        const credentials = this.authData.tst
+        const portal = this.portalData.dev
+        const credentials = this.authData.dev
         const locator = this.locatorData
         const user = this.userData
 

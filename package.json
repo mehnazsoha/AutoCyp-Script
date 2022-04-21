@@ -12,5 +12,8 @@
   },
   "author": "Nusrat Mehnaz",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "devDependencies": {
+    "@shelex/cypress-allure-plugin": "^2.26.5"
+  }
 }
